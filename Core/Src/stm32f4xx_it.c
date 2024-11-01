@@ -63,13 +63,14 @@ extern CAN_HandleTypeDef hcan2;
 extern SPI_HandleTypeDef hspi3;
 extern TIM_HandleTypeDef htim2;
 extern TIM_HandleTypeDef htim3;
+extern TIM_HandleTypeDef htim7;
 extern DMA_HandleTypeDef hdma_uart4_rx;
 extern DMA_HandleTypeDef hdma_uart4_tx;
 extern DMA_HandleTypeDef hdma_uart5_rx;
 extern DMA_HandleTypeDef hdma_uart5_tx;
 extern UART_HandleTypeDef huart4;
 extern UART_HandleTypeDef huart5;
-extern TIM_HandleTypeDef htim7;
+extern TIM_HandleTypeDef htim6;
 
 /* USER CODE BEGIN EV */
 
@@ -249,7 +250,16 @@ void CAN1_TX_IRQHandler(void)
 void CAN1_RX0_IRQHandler(void)
 {
   /* USER CODE BEGIN CAN1_RX0_IRQn 0 */
-
+  if (( READ_REG(hcan1.Instance->IER) & CAN_IT_RX_FIFO0_MSG_PENDING) != 0U)
+  {
+    /* Check if message is still pending */
+    if ((hcan1.Instance->RF0R & CAN_RF0R_FMP0) != 0U)
+    {
+      /* Call weak (surcharged) callback */
+      HAL_CAN_RxFifo0MsgPendingCallback(&hcan1);
+    }
+  }
+  return;
   /* USER CODE END CAN1_RX0_IRQn 0 */
   HAL_CAN_IRQHandler(&hcan1);
   /* USER CODE BEGIN CAN1_RX0_IRQn 1 */
@@ -370,6 +380,20 @@ void UART5_IRQHandler(void)
 }
 
 /**
+  * @brief This function handles TIM6 global interrupt, DAC1 and DAC2 underrun error interrupts.
+  */
+void TIM6_DAC_IRQHandler(void)
+{
+  /* USER CODE BEGIN TIM6_DAC_IRQn 0 */
+
+  /* USER CODE END TIM6_DAC_IRQn 0 */
+  HAL_TIM_IRQHandler(&htim6);
+  /* USER CODE BEGIN TIM6_DAC_IRQn 1 */
+
+  /* USER CODE END TIM6_DAC_IRQn 1 */
+}
+
+/**
   * @brief This function handles TIM7 global interrupt.
   */
 void TIM7_IRQHandler(void)
@@ -453,9 +477,6 @@ void CAN2_SCE_IRQHandler(void)
   /* USER CODE END CAN2_SCE_IRQn 1 */
 }
 
-/**
-  * @brief This function handles USB On The Go FS global interrupt.
-  */
 void OTG_FS_IRQHandler(void)
 {
   /* USER CODE BEGIN OTG_FS_IRQn 0 */
@@ -466,7 +487,6 @@ void OTG_FS_IRQHandler(void)
 
   /* USER CODE END OTG_FS_IRQn 1 */
 }
-
 /* USER CODE BEGIN 1 */
 
 /* USER CODE END 1 */

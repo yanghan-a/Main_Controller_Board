@@ -6,12 +6,13 @@
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2024 STMicroelectronics.
-  * All rights reserved.
+  * <h2><center>&copy; Copyright (c) 2021 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * This software is licensed under terms that can be found in the LICENSE file
-  * in the root directory of this software component.
-  * If no LICENSE file comes with this software, it is provided AS-IS.
+  * This software component is licensed by ST under Ultimate Liberty license
+  * SLA0044, the "License"; You may not use this file except in compliance with
+  * the License. You may obtain a copy of the License at:
+  *                             www.st.com/SLA0044
   *
   ******************************************************************************
   */
@@ -25,7 +26,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "common_inc.h"
+#include "communication.hpp"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -46,17 +48,27 @@
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN Variables */
 
+// List of semaphores
+osSemaphoreId sem_usb_irq;
+osSemaphoreId sem_uart4_dma;
+osSemaphoreId sem_uart5_dma;
+osSemaphoreId sem_usb_rx;
+osSemaphoreId sem_usb_tx;
+osSemaphoreId sem_can1_tx;
+osSemaphoreId sem_can2_tx;
+
 /* USER CODE END Variables */
 /* Definitions for defaultTask */
 osThreadId_t defaultTaskHandle;
 const osThreadAttr_t defaultTask_attributes = {
   .name = "defaultTask",
-  .stack_size = 128 * 4,
+  .stack_size = 2000,
   .priority = (osPriority_t) osPriorityNormal,
 };
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
+
 
 /* USER CODE END FunctionPrototypes */
 
@@ -76,19 +88,49 @@ void MX_FREERTOS_Init(void) {
   /* USER CODE END Init */
 
   /* USER CODE BEGIN RTOS_MUTEX */
-  /* add mutexes, ... */
+    /* add mutexes, ... */
   /* USER CODE END RTOS_MUTEX */
 
   /* USER CODE BEGIN RTOS_SEMAPHORES */
-  /* add semaphores, ... */
+    // Init usb irq binary semaphore, and start with no tokens by removing the starting one.
+    osSemaphoreDef(sem_usb_irq);
+    sem_usb_irq = osSemaphoreNew(1, 0, osSemaphore(sem_usb_irq));
+
+    // Create a semaphore for UART DMA and remove a token
+    osSemaphoreDef(sem_uart4_dma);
+    sem_uart4_dma = osSemaphoreNew(1, 1, osSemaphore(sem_uart4_dma));
+    osSemaphoreDef(sem_uart5_dma);
+    sem_uart5_dma = osSemaphoreNew(1, 1, osSemaphore(sem_uart5_dma));
+
+    // Create a semaphore for USB RX, and start with no tokens by removing the starting one.
+    osSemaphoreDef(sem_usb_rx);
+    sem_usb_rx = osSemaphoreNew(1, 0, osSemaphore(sem_usb_rx));
+
+    // Create a semaphore for USB TX
+    osSemaphoreDef(sem_usb_tx);
+    sem_usb_tx = osSemaphoreNew(1, 1, osSemaphore(sem_usb_tx));
+
+    // Create a semaphore for CAN TX
+    osSemaphoreDef(sem_can1_tx);
+    sem_can1_tx = osSemaphoreNew(1, 1, osSemaphore(sem_can1_tx));
+    osSemaphoreDef(sem_can2_tx);
+    sem_can2_tx = osSemaphoreNew(1, 1, osSemaphore(sem_can2_tx));
+
   /* USER CODE END RTOS_SEMAPHORES */
 
   /* USER CODE BEGIN RTOS_TIMERS */
-  /* start timers, add new ones, ... */
+
   /* USER CODE END RTOS_TIMERS */
 
   /* USER CODE BEGIN RTOS_QUEUES */
-  /* add queues, ... */
+    // This Task must run before MX_USB_DEVICE_Init(), so have to put it here.
+    const osThreadAttr_t usbIrqTask_attributes = {
+        .name = "usbIrqTask",
+        .stack_size = 500,
+        .priority = (osPriority_t) osPriorityAboveNormal,
+    };
+    usbIrqTaskHandle = osThreadNew(UsbDeferredInterruptTask, NULL, &usbIrqTask_attributes);
+
   /* USER CODE END RTOS_QUEUES */
 
   /* Create the thread(s) */
@@ -96,11 +138,11 @@ void MX_FREERTOS_Init(void) {
   defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
-  /* add threads, ... */
+    /* add threads, ... */
   /* USER CODE END RTOS_THREADS */
 
   /* USER CODE BEGIN RTOS_EVENTS */
-  /* add events, ... */
+    /* add events, ... */
   /* USER CODE END RTOS_EVENTS */
 
 }
@@ -117,11 +159,11 @@ void StartDefaultTask(void *argument)
   /* init code for USB_DEVICE */
   MX_USB_DEVICE_Init();
   /* USER CODE BEGIN StartDefaultTask */
-  /* Infinite loop */
-  for(;;)
-  {
-    osDelay(1);
-  }
+
+    // Invoke cpp-version main().
+    Main();
+
+    vTaskDelete(defaultTaskHandle);
   /* USER CODE END StartDefaultTask */
 }
 
@@ -130,3 +172,4 @@ void StartDefaultTask(void *argument)
 
 /* USER CODE END Application */
 
+/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

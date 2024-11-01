@@ -66,12 +66,14 @@ void DMA1_Stream7_IRQHandler(void);
 void SPI3_IRQHandler(void);
 void UART4_IRQHandler(void);
 void UART5_IRQHandler(void);
+void TIM6_DAC_IRQHandler(void);
 void TIM7_IRQHandler(void);
 void DMA2_Stream0_IRQHandler(void);
 void CAN2_TX_IRQHandler(void);
 void CAN2_RX0_IRQHandler(void);
 void CAN2_RX1_IRQHandler(void);
 void CAN2_SCE_IRQHandler(void);
+
 void OTG_FS_IRQHandler(void);
 /* USER CODE BEGIN EFP */
 
