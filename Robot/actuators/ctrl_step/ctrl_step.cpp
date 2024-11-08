@@ -35,20 +35,6 @@ void CtrlStepMotor::SetEnable(bool _enable)
     CanSendMessage(get_can_ctx(hcan), canBuf, &txHeader);
 }
 
-void CtrlStepMotor::SetEnableTemp(bool _enable)
-{
-    uint8_t mode = 0x7d;
-    txHeader.StdId = nodeID << 7 | mode;
-
-    // Int to Bytes
-    uint32_t val = _enable ? 1 : 0;
-    auto* b = (unsigned char*) &val;
-    for (int i = 0; i < 4; i++)
-        canBuf[i] = *(b + i);
-
-    CanSendMessage(get_can_ctx(hcan), canBuf, &txHeader);
-}
-
 void CtrlStepMotor::DoCalibration()
 {
     uint8_t mode = 0x02;
@@ -226,6 +212,20 @@ void CtrlStepMotor::Reboot()
 {
     uint8_t mode = 0x7f;
     txHeader.StdId = nodeID << 7 | mode;
+
+    CanSendMessage(get_can_ctx(hcan), canBuf, &txHeader);
+}
+
+void CtrlStepMotor::SetEnableTemp(bool _enable)
+{
+    uint8_t mode = 0x7d;
+    txHeader.StdId = nodeID << 7 | mode;
+
+    // Int to Bytes
+    uint32_t val = _enable ? 1 : 0;
+    auto* b = (unsigned char*) &val;
+    for (int i = 0; i < 4; i++)
+        canBuf[i] = *(b + i);
 
     CanSendMessage(get_can_ctx(hcan), canBuf, &txHeader);
 }

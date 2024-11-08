@@ -26,6 +26,7 @@ private:
     float L1_base[3] = {0};
     float L2_arm[3] = {0};
     float L3_elbow[3] = {0};
+    float L4_forearm[3] = {0};
     float L6_wrist[3] = {0};
 
     float l_se_2;
@@ -35,7 +36,7 @@ private:
     float atan_e;
 
 public:
-    struct Joint6D_t
+    struct Joint6D_t//6个关节的角度
     {
         Joint6D_t()
         = default;
@@ -49,7 +50,7 @@ public:
         friend Joint6D_t operator-(const Joint6D_t &_joints1, const Joint6D_t &_joints2);
     };
 
-    struct Pose6D_t
+    struct Pose6D_t//6个关节的位姿
     {
         Pose6D_t()
         = default;

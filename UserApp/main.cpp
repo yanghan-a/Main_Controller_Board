@@ -24,6 +24,7 @@ void ThreadRGBUpdate(void* argument);
 void Main(void)
 {
     int a;
+    int b;
     // Init all communication staff, including USB-CDC/VCP/UART/CAN etc.
     InitCommunication();
 

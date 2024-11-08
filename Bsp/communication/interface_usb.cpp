@@ -82,7 +82,7 @@ public:
 
 private:
     PacketSink &output_;
-} usb_stream_output(usb_packet_output_cdc);
+}usb_stream_output(usb_packet_output_cdc);//这里相当于是在类的后面直接创建一个对象
 
 // This is used by the printf feature. Hence the above statics, and below seemingly random ptr (it's externed)
 // TODO: less spaghetti code
@@ -103,7 +103,7 @@ struct USBInterface
 
 // Note: statics make this less modular.
 // Note: we use a single rx semaphore and loop over data_pending to allow a single pump loop thread
-static USBInterface CDC_interface = {
+static USBInterface CDC_interface = {//这里是USBInterface结构体的实例化
     .rx_buf = nullptr,
     .rx_len = 0,
     .data_pending = false,
@@ -111,7 +111,7 @@ static USBInterface CDC_interface = {
     .in_ep = CDC_IN_EP,
     .usb_sender = usb_packet_output_cdc,
 };
-// static USBInterface ODrive_interface = {
+// static USBInterface ODrive_interface = {//这里是USBInterface结构体的实例化
 //     .rx_buf = nullptr,
 //     .rx_len = 0,
 //     .data_pending = false,
@@ -120,7 +120,7 @@ static USBInterface CDC_interface = {
 //     .usb_sender = usb_packet_output_native,
 // };
 
-static void UsbServerTask(void *ctx)
+static void UsbServerTask(void *ctx)// 任务函数
 {
     (void) ctx;
 

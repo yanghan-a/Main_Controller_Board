@@ -27,6 +27,7 @@
 // @param buffer buffer of ASCII encoded characters
 // @param len size of the buffer
 void ASCII_protocol_process_line(const uint8_t* buffer, size_t len, StreamSink &response_channel)
+//这里处理单行数据，并根据数据通道调用相应的处理函数
 {
     static_assert(sizeof(char) == sizeof(uint8_t));
 
@@ -45,9 +46,9 @@ void ASCII_protocol_process_line(const uint8_t* buffer, size_t len, StreamSink &
         OnUart5AsciiCmd(cmd, len, response_channel);
 }
 
-void ASCII_protocol_parse_stream(const uint8_t* buffer, size_t len, StreamSink &response_channel)
+void ASCII_protocol_parse_stream(const uint8_t* buffer, size_t len, StreamSink &response_channel)//这里处理多行流数据
 {
-    static uint8_t parse_buffer[MAX_LINE_LENGTH];
+    static uint8_t parse_buffer[MAX_LINE_LENGTH];//这个表明一行数据最大长度为256字节
     static bool read_active = true;
     static uint32_t parse_buffer_idx = 0;
 
@@ -62,7 +63,7 @@ void ASCII_protocol_parse_stream(const uint8_t* buffer, size_t len, StreamSink &
 
         // Fetch the next char
         uint8_t c = *(buffer++);
-        bool is_end_of_line = (c == '\r' || c == '\n');
+        bool is_end_of_line = (c == '\r' || c == '\n');//对多行流数据按行分开后逐行处理
         if (is_end_of_line)
         {
             if (read_active)

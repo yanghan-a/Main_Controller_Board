@@ -121,7 +121,7 @@ static void UartServerTask(void* ctx)
 
         // deadline_ms = timeout_to_deadline(PROTOCOL_SERVER_TIMEOUT_MS);
         // Process bytes in one or two chunks (two in case there was a wrap)
-        if (new_rcv_idx < dma_last_rcv_idx[0])
+        if (new_rcv_idx < dma_last_rcv_idx[0])//这里主要是对于DMA循环接收数据的处理，尤其对于重装寄存器更新的时候的处理
         {
             // uart4_stream_input.process_bytes(dma_rx_buffer[0] + dma_last_rcv_idx[0],
             //                                  UART_RX_BUFFER_SIZE - dma_last_rcv_idx[0],
@@ -153,7 +153,7 @@ static void UartServerTask(void* ctx)
         // deadline_ms = timeout_to_deadline(PROTOCOL_SERVER_TIMEOUT_MS);
         // Process bytes in one or two chunks (two in case there was a wrap)
         if (new_rcv_idx < dma_last_rcv_idx[1])
-        {
+        {//接收到的数据小于最大容量
             // uart4_stream_input.process_bytes(dma_rx_buffer[1] + dma_last_rcv_idx[1],
             //                                  UART_RX_BUFFER_SIZE - dma_last_rcv_idx[1],
             //                                  nullptr); // TODO: use process_all
@@ -162,7 +162,7 @@ static void UartServerTask(void* ctx)
             dma_last_rcv_idx[1] = 0;
         }
         if (new_rcv_idx > dma_last_rcv_idx[1])
-        {
+        {//接收到的数据大于最大容量
             // uart4_stream_input.process_bytes(dma_rx_buffer[1] + dma_last_rcv_idx[1],
             //                                  new_rcv_idx - dma_last_rcv_idx[1],
             //                                  nullptr); // TODO: use process_all
@@ -182,12 +182,12 @@ const osThreadAttr_t uartServerTask_attributes = {
     .priority = (osPriority_t) osPriorityNormal,
 };
 
-void StartUartServer()
+void StartUartServer()//启动dma搬运uart数据
 {
     // DMA is set up to receive in a circular buffer forever.
     // We don't use interrupts to fetch the data, instead we periodically read
     // data out of the circular buffer into a parse buffer, controlled by a state machine
-    HAL_UART_Receive_DMA(&huart4, dma_rx_buffer[0], sizeof(dma_rx_buffer[0]));
+    HAL_UART_Receive_DMA(&huart4, dma_rx_buffer[0], sizeof(dma_rx_buffer[0]));//这里启动DMA的时候会告诉DMA期待接收的数据量
     dma_last_rcv_idx[0] = UART_RX_BUFFER_SIZE - huart4.hdmarx->Instance->NDTR;
 
     HAL_UART_Receive_DMA(&huart5, dma_rx_buffer[1], sizeof(dma_rx_buffer[1]));
@@ -197,7 +197,7 @@ void StartUartServer()
     uartServerTaskHandle = osThreadNew(UartServerTask, nullptr, &uartServerTask_attributes);
 }
 
-void HAL_UART_TxCpltCallback(UART_HandleTypeDef* huart)
+void HAL_UART_TxCpltCallback(UART_HandleTypeDef* huart)//串口发送完成会自动调用这个回调函数释放信号量
 {
     if (huart->Instance == UART4)
         osSemaphoreRelease(sem_uart4_dma);

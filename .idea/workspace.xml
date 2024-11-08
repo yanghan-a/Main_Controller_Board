@@ -20,280 +20,11 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0ae029b6-ed1d-46ac-8080-102ceb924390" name="Changes" comment="constructing basic code for stm32f405 using cubemx">
-      <change afterPath="$PROJECT_DIR$/3rdParty/fibre/cpp/include/fibre/cpp_utils.hpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/fibre/cpp/include/fibre/crc.hpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/fibre/cpp/include/fibre/decoders.hpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/fibre/cpp/include/fibre/encoders.hpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/fibre/cpp/include/fibre/protocol.hpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/fibre/cpp/package.lua" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/fibre/cpp/protocol.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/cpp/Print.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/cpp/Print.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/cpp/Printable.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/cpp/U8g2lib.hpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/cpp/U8x8lib.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/cpp/U8x8lib.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/cpp/WString.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/cpp/WString.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/cpp/pgmspace.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/cpp/stdlib_noniso.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/cpp/stdlib_noniso.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8g2.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8g2_bitmap.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8g2_box.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8g2_buffer.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8g2_circle.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8g2_cleardisplay.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8g2_d_memory.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8g2_d_setup.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8g2_font.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8g2_fonts.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8g2_hvline.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8g2_input_value.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8g2_intersection.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8g2_kerning.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8g2_line.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8g2_ll_hvline.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8g2_message.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8g2_polygon.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8g2_selection_list.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8g2_setup.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8g2_stm32f4.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8log.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8log_u8g2.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8log_u8x8.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_8x8.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_byte.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_cad.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_capture.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_d_a2printer.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_d_il3820_296x128.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_d_ist3020.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_d_ist7920.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_d_ks0108.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_d_lc7981.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_d_ld7032_60x32.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_d_ls013b7dh03.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_d_max7219.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_d_pcd8544_84x48.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_d_pcf8812.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_d_pcf8814_hx1230.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_d_s1d15721.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_d_s1d15e06.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_d_sbn1661.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_d_sed1330.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_d_sh1106_64x32.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_d_sh1106_72x40.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_d_sh1107.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_d_sh1108.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_d_sh1122.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_d_ssd1305.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_d_ssd1306_128x32.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_d_ssd1306_128x64_noname.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_d_ssd1306_128x80_noname.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_d_ssd1306_2040x16.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_d_ssd1306_48x64.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_d_ssd1306_64x32.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_d_ssd1306_64x48.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_d_ssd1306_72x40.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_d_ssd1306_96x16.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_d_ssd1309.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_d_ssd1316.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_d_ssd1317.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_d_ssd1318.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_d_ssd1320.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_d_ssd1322.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_d_ssd1325.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_d_ssd1326.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_d_ssd1327.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_d_ssd1329.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_d_ssd1606_172x72.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_d_ssd1607_200x200.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_d_st7511.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_d_st75256.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_d_st7528.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_d_st75320.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_d_st7565.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_d_st7567.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_d_st7571.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_d_st7586s_erc240160.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_d_st7586s_s028hn118a.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_d_st7586s_ymc240160.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_d_st7588.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_d_st7920.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_d_stdio.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_d_t6963.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_d_uc1601.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_d_uc1604.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_d_uc1608.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_d_uc1610.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_d_uc1611.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_d_uc1617.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_d_uc1638.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_d_uc1701_dogs102.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_d_uc1701_mini12864.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_debounce.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_display.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_fonts.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_gpio.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_input_value.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_message.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_selection_list.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_setup.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_string.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_u16toa.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/3rdParty/u8g2/u8x8_u8toa.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Bsp/communication/ascii_processor.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Bsp/communication/ascii_processor.hpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Bsp/communication/communication.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Bsp/communication/communication.hpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Bsp/communication/interface_can.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Bsp/communication/interface_can.hpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Bsp/communication/interface_uart.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Bsp/communication/interface_uart.hpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Bsp/communication/interface_usb.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Bsp/communication/interface_usb.hpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Bsp/gpio/analog.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Bsp/gpio/analog.hpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Bsp/gpio/encoder.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Bsp/gpio/encoder.hpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Bsp/gpio/pwm.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Bsp/gpio/pwm.hpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Bsp/gpio/rgb.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Bsp/gpio/rgb.hpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Bsp/imu/MPU6050.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Bsp/imu/MPU6050.hpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Bsp/imu/MPU6050_6Axis_MotionApps20.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Bsp/imu/MPU6050_9Axis_MotionApps41.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Bsp/imu/filters/biquad_filter.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Bsp/imu/filters/biquad_filter.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Bsp/imu/filters/filter_math.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Bsp/imu/filters/filter_math.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Bsp/imu/helper_3dmath.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Bsp/imu/i2c_dev.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Bsp/imu/i2c_dev.hpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Bsp/imu/mpu6050_1.hpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Bsp/memory/eeprom_interface.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Bsp/memory/emulated_eeprom.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Bsp/memory/emulated_eeprom.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Bsp/utils/arm_math/arm_common_tables.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Bsp/utils/arm_math/arm_const_structs.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Bsp/utils/arm_math/arm_math.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Bsp/utils/software_i2c/soft_i2c.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Bsp/utils/software_i2c/soft_i2c.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Bsp/utils/time_utils.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Bsp/utils/time_utils.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Bsp/utils/timer.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Bsp/utils/timer.hpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Robot/actuators/ctrl_step/ctrl_step.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Robot/actuators/ctrl_step/ctrl_step.hpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Robot/actuators/mintasca/sca.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Robot/actuators/mintasca/sca.hpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Robot/actuators/mintasca/sca_api.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Robot/actuators/mintasca/sca_api.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Robot/actuators/mintasca/sca_protocol.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Robot/actuators/mintasca/sca_protocol.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Robot/algorithms/kinematic/6dof_kinematic.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Robot/algorithms/kinematic/6dof_kinematic.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Robot/instances/dummy_robot.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Robot/instances/dummy_robot.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/UserApp/common_inc.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/UserApp/freertos_inc.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/UserApp/main.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/UserApp/protocols/ascii_protocol.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/UserApp/protocols/can_protocol.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/UserApp/protocols/cmd_protocol.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/UserApp/retarget.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/UserApp/retarget.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.cproject" beforeDir="false" afterPath="$PROJECT_DIR$/.cproject" afterDir="false" />
+    <list default="true" id="0ae029b6-ed1d-46ac-8080-102ceb924390" name="Changes" comment="自己构建的f405rgt6的代码，这次给it中断中加了usb中断处理函数后可以正常工作了。">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.mxproject" beforeDir="false" afterPath="$PROJECT_DIR$/.mxproject" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMakeLists_template.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists_template.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Core/Inc/FreeRTOSConfig.h" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Inc/FreeRTOSConfig.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Core/Inc/adc.h" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Inc/adc.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Core/Inc/stm32f4xx_hal_conf.h" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Inc/stm32f4xx_hal_conf.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Core/Inc/stm32f4xx_it.h" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Inc/stm32f4xx_it.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Core/Inc/tim.h" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Inc/tim.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Core/Src/adc.c" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Src/adc.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Core/Src/freertos.c" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Src/freertos.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Core/Src/main.c" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Src/main.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Core/Src/stm32f4xx_hal_timebase_tim.c" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Src/stm32f4xx_hal_timebase_tim.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Core/Src/stm32f4xx_it.c" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Src/stm32f4xx_it.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Core/Src/syscalls.c" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Src/syscalls.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Core/Src/system_stm32f4xx.c" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Src/system_stm32f4xx.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Core/Src/tim.c" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Src/tim.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Core/Src/usart.c" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Src/usart.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Core/Startup/startup_stm32f405rgtx.s" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Startup/startup_stm32f405rgtx.s" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc/usbd_cdc.h" beforeDir="false" afterPath="$PROJECT_DIR$/Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc/usbd_cdc.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc.c" beforeDir="false" afterPath="$PROJECT_DIR$/Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_core.h" beforeDir="false" afterPath="$PROJECT_DIR$/Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_core.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ctlreq.h" beforeDir="false" afterPath="$PROJECT_DIR$/Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ctlreq.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_def.h" beforeDir="false" afterPath="$PROJECT_DIR$/Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_def.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h" beforeDir="false" afterPath="$PROJECT_DIR$/Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_core.c" beforeDir="false" afterPath="$PROJECT_DIR$/Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_core.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ctlreq.c" beforeDir="false" afterPath="$PROJECT_DIR$/Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ctlreq.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ioreq.c" beforeDir="false" afterPath="$PROJECT_DIR$/Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ioreq.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Middlewares/ST/STM32_USB_Device_Library/LICENSE.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/STM32F405RGT6.ioc" beforeDir="false" afterPath="$PROJECT_DIR$/STM32F405RGT6.ioc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/USB_DEVICE/App/usb_device.c" beforeDir="false" afterPath="$PROJECT_DIR$/USB_DEVICE/App/usb_device.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/USB_DEVICE/App/usb_device.h" beforeDir="false" afterPath="$PROJECT_DIR$/USB_DEVICE/App/usb_device.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/USB_DEVICE/App/usbd_cdc_if.c" beforeDir="false" afterPath="$PROJECT_DIR$/USB_DEVICE/App/usbd_cdc_if.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/USB_DEVICE/App/usbd_cdc_if.h" beforeDir="false" afterPath="$PROJECT_DIR$/USB_DEVICE/App/usbd_cdc_if.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/USB_DEVICE/App/usbd_desc.c" beforeDir="false" afterPath="$PROJECT_DIR$/USB_DEVICE/App/usbd_desc.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/USB_DEVICE/App/usbd_desc.h" beforeDir="false" afterPath="$PROJECT_DIR$/USB_DEVICE/App/usbd_desc.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/USB_DEVICE/Target/usbd_conf.c" beforeDir="false" afterPath="$PROJECT_DIR$/USB_DEVICE/Target/usbd_conf.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/USB_DEVICE/Target/usbd_conf.h" beforeDir="false" afterPath="$PROJECT_DIR$/USB_DEVICE/Target/usbd_conf.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug-mingw-stm32/.cmake/api/v1/query/cache-v2" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug-mingw-stm32/.cmake/api/v1/query/cmakeFiles-v1" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug-mingw-stm32/.cmake/api/v1/query/codemodel-v2" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug-mingw-stm32/.cmake/api/v1/query/toolchains-v1" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug-mingw-stm32/.cmake/api/v1/reply/cache-v2-1207cb3b5768c7ca9764.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug-mingw-stm32/.cmake/api/v1/reply/cmakeFiles-v1-3560245bd054d7504c60.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug-mingw-stm32/.cmake/api/v1/reply/codemodel-v2-fb5e93bff5acb67a99a7.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug-mingw-stm32/.cmake/api/v1/reply/directory-.-Debug-d0094a50bb2071803777.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug-mingw-stm32/.cmake/api/v1/reply/index-2024-09-22T14-33-43-0269.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug-mingw-stm32/.cmake/api/v1/reply/target-STM32F405RGT6.elf-Debug-1aed616f77fc94d871be.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug-mingw-stm32/.cmake/api/v1/reply/toolchains-v1-a47ef82df71d8510213f.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug-mingw-stm32/CMakeCache.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug-mingw-stm32/CMakeFiles/3.28.6/CMakeASMCompiler.cmake" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug-mingw-stm32/CMakeFiles/3.28.6/CMakeCCompiler.cmake" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug-mingw-stm32/CMakeFiles/3.28.6/CMakeCXXCompiler.cmake" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug-mingw-stm32/CMakeFiles/3.28.6/CMakeDetermineCompilerABI_C.bin" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug-mingw-stm32/CMakeFiles/3.28.6/CMakeDetermineCompilerABI_CXX.bin" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug-mingw-stm32/CMakeFiles/3.28.6/CMakeSystem.cmake" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug-mingw-stm32/CMakeFiles/3.28.6/CompilerIdC/CMakeCCompilerId.c" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug-mingw-stm32/CMakeFiles/3.28.6/CompilerIdC/CMakeCCompilerId.o" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug-mingw-stm32/CMakeFiles/3.28.6/CompilerIdCXX/CMakeCXXCompilerId.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug-mingw-stm32/CMakeFiles/3.28.6/CompilerIdCXX/CMakeCXXCompilerId.o" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug-mingw-stm32/CMakeFiles/CMakeConfigureLog.yaml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug-mingw-stm32/CMakeFiles/CMakeDirectoryInformation.cmake" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug-mingw-stm32/CMakeFiles/Makefile.cmake" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug-mingw-stm32/CMakeFiles/Makefile2" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug-mingw-stm32/CMakeFiles/STM32F405RGT6.elf.dir/DependInfo.cmake" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug-mingw-stm32/CMakeFiles/STM32F405RGT6.elf.dir/build.make" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug-mingw-stm32/CMakeFiles/STM32F405RGT6.elf.dir/cmake_clean.cmake" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug-mingw-stm32/CMakeFiles/STM32F405RGT6.elf.dir/compiler_depend.make" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug-mingw-stm32/CMakeFiles/STM32F405RGT6.elf.dir/compiler_depend.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug-mingw-stm32/CMakeFiles/STM32F405RGT6.elf.dir/depend.make" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug-mingw-stm32/CMakeFiles/STM32F405RGT6.elf.dir/flags.make" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug-mingw-stm32/CMakeFiles/STM32F405RGT6.elf.dir/link.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug-mingw-stm32/CMakeFiles/STM32F405RGT6.elf.dir/objects1.rsp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug-mingw-stm32/CMakeFiles/STM32F405RGT6.elf.dir/progress.make" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug-mingw-stm32/CMakeFiles/TargetDirectories.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug-mingw-stm32/CMakeFiles/clion-Debug-MinGW STM32-log.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug-mingw-stm32/CMakeFiles/clion-environment.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug-mingw-stm32/CMakeFiles/cmake.check_cache" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug-mingw-stm32/CMakeFiles/progress.marks" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug-mingw-stm32/Makefile" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug-mingw-stm32/STM32F405RGT6.bin" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug-mingw-stm32/STM32F405RGT6.cbp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug-mingw-stm32/STM32F405RGT6.elf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug-mingw-stm32/STM32F405RGT6.hex" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug-mingw-stm32/STM32F405RGT6.map" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug-mingw-stm32/cmake_install.cmake" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/STM32F405RGTX_FLASH.ld" beforeDir="false" afterPath="$PROJECT_DIR$/STM32F405RGTX_FLASH.ld" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/STM32F405RGTX_RAM.ld" beforeDir="false" afterPath="$PROJECT_DIR$/STM32F405RGTX_RAM.ld" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UserApp/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/UserApp/main.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -1099,26 +830,26 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "OpenOCD Download & Run.STM32F405RGT6.elf.executor": "Run",
-    "RunOnceActivity.RadMigrateCodeStyle": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.cidr.known.project.marker": "true",
-    "RunOnceActivity.readMode.enableVisualFormatting": "true",
-    "cf.first.check.clang-format": "false",
-    "cidr.known.project.marker": "true",
-    "git-widget-placeholder": "main",
-    "last_opened_file_path": "D:/Place_for_file/CLion/STM32F4/STM32F405RGT6/UserApp",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "com.jetbrains.cidr.embedded.config",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;OpenOCD Download &amp; Run.STM32F405RGT6.elf.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.RadMigrateCodeStyle&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
+    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/Place_for_file/CLion/STM32F4/STM32F405RGT6/UserApp&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.cidr.embedded.config&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="D:\Place_for_file\CLion\STM32F4\STM32F405RGT6\UserApp" />
@@ -1126,12 +857,12 @@
     </key>
   </component>
   <component name="RunManager" selected="OpenOCD Download &amp; Run.STM32F405RGT6.elf">
-    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
+    <configuration name="STM32F405RGT6.elf" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="STM32F405RGT6" TARGET_NAME="STM32F405RGT6.elf" CONFIG_NAME="Debug-MinGW STM32" RUN_TARGET_PROJECT_NAME="STM32F405RGT6" RUN_TARGET_NAME="STM32F405RGT6.elf">
       <method v="2">
-        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
-    <configuration name="STM32F405RGT6.elf" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="STM32F405RGT6" TARGET_NAME="STM32F405RGT6.elf" CONFIG_NAME="Debug-MinGW STM32" RUN_TARGET_PROJECT_NAME="STM32F405RGT6" RUN_TARGET_NAME="STM32F405RGT6.elf">
+    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
@@ -1167,7 +898,8 @@
       <workItem from="1728115400108" duration="255000" />
       <workItem from="1728115672200" duration="14565000" />
       <workItem from="1728135878383" duration="1101000" />
-      <workItem from="1730374486601" duration="5316000" />
+      <workItem from="1730374486601" duration="5413000" />
+      <workItem from="1730730772328" duration="3714000" />
     </task>
     <task id="LOCAL-00001" summary="constructing basic code for stm32f405 using cubemx">
       <option name="closed" value="true" />
@@ -1185,7 +917,15 @@
       <option name="project" value="LOCAL" />
       <updated>1727090736560</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="自己构建的f405rgt6的代码，这次给it中断中加了usb中断处理函数后可以正常工作了。">
+      <option name="closed" value="true" />
+      <created>1730480596765</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1730480596765</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -1209,6 +949,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="constructing basic code for stm32f405 using cubemx" />
-    <option name="LAST_COMMIT_MESSAGE" value="constructing basic code for stm32f405 using cubemx" />
+    <MESSAGE value="自己构建的f405rgt6的代码，这次给it中断中加了usb中断处理函数后可以正常工作了。" />
+    <option name="LAST_COMMIT_MESSAGE" value="自己构建的f405rgt6的代码，这次给it中断中加了usb中断处理函数后可以正常工作了。" />
   </component>
 </project>
