@@ -64,8 +64,6 @@ public:
         return make_protocol_member_list(
             make_protocol_ro_property("angle", &angle),
             make_protocol_function("reboot", *this, &CtrlStepMotor::Reboot),
-            make_protocol_function("get_temperature", *this, &CtrlStepMotor::GetTemp),
-            make_protocol_function("set_enable_temperature", *this, &CtrlStepMotor::SetEnableTemp, "enable"),
             make_protocol_function("erase_configs", *this, &CtrlStepMotor::EraseConfigs),
             make_protocol_function("set_enable", *this, &CtrlStepMotor::SetEnable, "enable"),
             make_protocol_function("set_position_with_time", *this,

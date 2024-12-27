@@ -22,9 +22,18 @@
   <component name="ChangeListManager">
     <list default="true" id="0ae029b6-ed1d-46ac-8080-102ceb924390" name="Changes" comment="自己构建的f405rgt6的代码，这次给it中断中加了usb中断处理函数后可以正常工作了。">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/STM32F405RGTX_FLASH.ld" beforeDir="false" afterPath="$PROJECT_DIR$/STM32F405RGTX_FLASH.ld" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/STM32F405RGTX_RAM.ld" beforeDir="false" afterPath="$PROJECT_DIR$/STM32F405RGTX_RAM.ld" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UserApp/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/UserApp/main.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Bsp/communication/interface_usb.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Bsp/communication/interface_usb.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/actuators/ctrl_step/ctrl_step.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Robot/actuators/ctrl_step/ctrl_step.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/actuators/ctrl_step/ctrl_step.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/Robot/actuators/ctrl_step/ctrl_step.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/actuators/mintasca/sca.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/actuators/mintasca/sca.hpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/actuators/mintasca/sca_api.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/actuators/mintasca/sca_api.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/actuators/mintasca/sca_protocol.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/actuators/mintasca/sca_protocol.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/algorithms/kinematic/6dof_kinematic.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Robot/algorithms/kinematic/6dof_kinematic.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/instances/dummy_robot.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Robot/instances/dummy_robot.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UserApp/protocols/ascii_protocol.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/UserApp/protocols/ascii_protocol.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -862,11 +871,6 @@
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
-    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
-    </configuration>
     <configuration name="STM32F405RGT6.elf" type="com.jetbrains.cidr.embedded.openocd.conf.type" factoryName="com.jetbrains.cidr.embedded.openocd.conf.factory" nameIsGenerated="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="STM32F405RGT6" TARGET_NAME="STM32F405RGT6.elf" CONFIG_NAME="Debug-MinGW STM32" version="1" RUN_TARGET_PROJECT_NAME="STM32F405RGT6" RUN_TARGET_NAME="STM32F405RGT6.elf">
       <openocd version="1" gdb-port="3333" telnet-port="4444" board-config="D:\Place_for_file\CLion\STM32F4\STM32F405RGT6\stlink.cfg" reset-type="INIT" download-type="UPDATED_ONLY">
         <debugger kind="GDB" isBundled="true" />
@@ -900,6 +904,7 @@
       <workItem from="1728135878383" duration="1101000" />
       <workItem from="1730374486601" duration="5413000" />
       <workItem from="1730730772328" duration="3714000" />
+      <workItem from="1735265452700" duration="6921000" />
     </task>
     <task id="LOCAL-00001" summary="constructing basic code for stm32f405 using cubemx">
       <option name="closed" value="true" />

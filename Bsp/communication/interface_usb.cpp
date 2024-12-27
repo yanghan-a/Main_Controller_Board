@@ -49,7 +49,7 @@ private:
 
 // Note we could have independent semaphores here to allow concurrent transmission
 USBSender usb_packet_output_cdc(CDC_OUT_EP, sem_usb_tx);
-// USBSender usb_packet_output_native(ODRIVE_OUT_EP, sem_usb_tx);
+USBSender usb_packet_output_native(ODRIVE_OUT_EP, sem_usb_tx);
 
 class TreatPacketSinkAsStreamSink : public StreamSink
 {
@@ -88,7 +88,7 @@ private:
 // TODO: less spaghetti code
 StreamSink *usbStreamOutputPtr = &usb_stream_output;
 
-// BidirectionalPacketBasedChannel usb_channel(usb_packet_output_native);
+BidirectionalPacketBasedChannel usb_channel(usb_packet_output_native);
 
 
 struct USBInterface
@@ -111,14 +111,14 @@ static USBInterface CDC_interface = {//这里是USBInterface结构体的实例�
     .in_ep = CDC_IN_EP,
     .usb_sender = usb_packet_output_cdc,
 };
-// static USBInterface ODrive_interface = {//这里是USBInterface结构体的实例化
-//     .rx_buf = nullptr,
-//     .rx_len = 0,
-//     .data_pending = false,
-//     .out_ep = ODRIVE_OUT_EP,
-//     .in_ep = ODRIVE_IN_EP,
-//     .usb_sender = usb_packet_output_native,
-// };
+static USBInterface ODrive_interface = {//这里是USBInterface结构体的实例化
+    .rx_buf = nullptr,
+    .rx_len = 0,
+    .data_pending = false,
+    .out_ep = ODRIVE_OUT_EP,
+    .in_ep = ODRIVE_IN_EP,
+    .usb_sender = usb_packet_output_native,
+};
 
 static void UsbServerTask(void *ctx)// 任务函数
 {
@@ -136,18 +136,17 @@ static void UsbServerTask(void *ctx)// 任务函数
             if (CDC_interface.data_pending)
             {
                 CDC_interface.data_pending = false;
-
                 ASCII_protocol_parse_stream(CDC_interface.rx_buf, CDC_interface.rx_len, usb_stream_output);
                 USBD_CDC_ReceivePacket(&hUsbDeviceFS, CDC_interface.out_ep);  // Allow next packet
             }
 
             // Native Interface
-            // if (ODrive_interface.data_pending)
-            // {
-            //     ODrive_interface.data_pending = false;
-            //     usb_channel.process_packet(ODrive_interface.rx_buf, ODrive_interface.rx_len);
-            //     USBD_CDC_ReceivePacket(&hUsbDeviceFS, ODrive_interface.out_ep);  // Allow next packet
-            // }
+            if (ODrive_interface.data_pending)
+            {
+                ODrive_interface.data_pending = false;
+                usb_channel.process_packet(ODrive_interface.rx_buf, ODrive_interface.rx_len);
+                USBD_CDC_ReceivePacket(&hUsbDeviceFS, ODrive_interface.out_ep);  // Allow next packet
+            }
         }
     }
 }
@@ -161,10 +160,10 @@ void usb_rx_process_packet(uint8_t *buf, uint32_t len, uint8_t endpoint_pair)
     {
         usb_iface = &CDC_interface;
     }
-    // else if (endpoint_pair == ODrive_interface.out_ep)
-    // {
-    //     usb_iface = &ODrive_interface;
-    // }
+    else if (endpoint_pair == ODrive_interface.out_ep)
+    {
+        usb_iface = &ODrive_interface;
+    }
     else
     {
         return;

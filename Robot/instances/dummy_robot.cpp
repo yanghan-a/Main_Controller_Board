@@ -1,8 +1,10 @@
 #include "communication.hpp"
 #include "dummy_robot.h"
 
+#include "time_utils.h"
+
 inline float AbsMaxOf6(DOF6Kinematic::Joint6D_t _joints, uint8_t &_index)
-{
+{//判断6个关节的绝对值最大值，并返回最大值和对应的关节序号
     float max = -1;
     for (uint8_t i = 0; i < 6; i++)
     {
@@ -57,8 +59,9 @@ void DummyRobot::Reboot()
     HAL_NVIC_SystemReset();
 }
 
+
 void DummyRobot::MoveJoints(DOF6Kinematic::Joint6D_t _joints)
-{
+{//参数为目标位置，另一个参数为速度限制
     for (int j = 1; j <= 6; j++)
     {
         motorJ[j]->SetAngleWithVelocityLimit(_joints.a[j - 1] - initPose.a[j - 1],
@@ -73,7 +76,7 @@ bool DummyRobot::MoveJ(float _j1, float _j2, float _j3, float _j4, float _j5, fl
     bool valid = true;
 
     for (int j = 1; j <= 6; j++)
-    {
+    {//判断6个关节运动返回是否超过了限位
         if (targetJointsTmp.a[j - 1] > motorJ[j]->angleLimitMax ||
             targetJointsTmp.a[j - 1] < motorJ[j]->angleLimitMin)
             valid = false;
@@ -81,9 +84,9 @@ bool DummyRobot::MoveJ(float _j1, float _j2, float _j3, float _j4, float _j5, fl
 
     if (valid)
     {
-        DOF6Kinematic::Joint6D_t deltaJoints = targetJointsTmp - currentJoints;
+        DOF6Kinematic::Joint6D_t deltaJoints = targetJointsTmp - currentJoints;//找到目标位置与当前位置的差值
         uint8_t index;
-        float maxAngle = AbsMaxOf6(deltaJoints, index);
+        float maxAngle = AbsMaxOf6(deltaJoints, index);//找到差值最大的
         float time = maxAngle * (float) (motorJ[index + 1]->reduction) / jointSpeed;
         for (int j = 1; j <= 6; j++)
         {
@@ -105,16 +108,19 @@ bool DummyRobot::ikCalculate(float _x, float _y, float _z, float _a, float _b, f
     DOF6Kinematic::Pose6D_t pose6D(_x, _y, _z, _a, _b, _c);
     DOF6Kinematic::IKSolves_t ikSolves{};
     DOF6Kinematic::Joint6D_t lastJoint6D{};
+    uint32_t t1 = micros();
     dof6Solver->SolveIK(pose6D, lastJoint6D, ikSolves);
+    t1 = micros() - t1;
     bool valid[8];
     int validCnt = 0;
 
-
+    printf("time:%lu\r\n",t1);
     for (int i = 0; i < 8; i++)
     {
         valid[i] = true;
         printf("solution%d:%.1f,%.1f,%.1f,%.1f,%.1f,%.1f \r\n", i,ikSolves.config[i].a[0],ikSolves.config[i].a[1],ikSolves.config[i].a[2],
             ikSolves.config[i].a[3],ikSolves.config[i].a[4],ikSolves.config[i].a[5]);
+
 
         for (int j = 1; j <= 6; j++)
         {
@@ -289,9 +295,9 @@ void DummyRobot::CalibrateHomeOffset()
 void DummyRobot::Homing()
 {
     float lastSpeed = jointSpeed;
-    SetJointSpeed(10);
+    SetJointSpeed(20);
 
-    MoveJ(0, 0, 90, 0, 0, 0);
+    MoveJ(0, -90, 0, 0, 0, 0);
     MoveJoints(targetJoints);
     while (IsMoving())
         osDelay(10);
@@ -303,7 +309,7 @@ void DummyRobot::Homing()
 void DummyRobot::Resting()
 {
     float lastSpeed = jointSpeed;
-    SetJointSpeed(10);
+    SetJointSpeed(20);
 
     MoveJ(REST_POSE.a[0], REST_POSE.a[1], REST_POSE.a[2],
           REST_POSE.a[3], REST_POSE.a[4], REST_POSE.a[5]);
@@ -320,6 +326,7 @@ void DummyRobot::SetEnable(bool _enable)
     motorJ[ALL]->SetEnable(_enable);
     isEnabled = _enable;
 }
+
 
 void DummyRobot::SetRGBEnable(bool _enable)
 {
@@ -488,17 +495,13 @@ uint32_t DummyRobot::CommandHandler::ParseCommand(const std::string &_cmd)
     {
         case COMMAND_TARGET_POINT_SEQUENTIAL:
         case COMMAND_CONTINUES_TRAJECTORY:
-            if (_cmd[0] == '>' || _cmd[0] == '&')
+            if (_cmd[0] == '>')
             {
                 float joints[6];
                 float speed;
 
-                if (_cmd[0] == '>')
-                    argNum = sscanf(_cmd.c_str(), ">%f,%f,%f,%f,%f,%f,%f", joints, joints + 1, joints + 2,
-                                    joints + 3, joints + 4, joints + 5, &speed);
-                if (_cmd[0] == '&')
-                    argNum = sscanf(_cmd.c_str(), "&%f,%f,%f,%f,%f,%f,%f", joints, joints + 1, joints + 2,
-                                    joints + 3, joints + 4, joints + 5, &speed);
+                argNum = sscanf(_cmd.c_str(), ">%f,%f,%f,%f,%f,%f,%f", joints, joints + 1, joints + 2,
+                                joints + 3, joints + 4, joints + 5, &speed);
                 if (argNum == 6)
                 {
                     context->MoveJ(joints[0], joints[1], joints[2],
@@ -531,6 +534,11 @@ uint32_t DummyRobot::CommandHandler::ParseCommand(const std::string &_cmd)
                     context->SetJointSpeed(speed);
                     context->MoveL(pose[0], pose[1], pose[2], pose[3], pose[4], pose[5]);
                 }
+                // Trigger a transmission immediately, in case IsMoving() returns false
+                context->MoveJoints(context->targetJoints);
+
+                while (context->IsMoving())
+                    osDelay(5);
                 Respond(*usbStreamOutputPtr, "ok");
                 Respond(*uart4StreamOutputPtr, "ok");
             }
@@ -538,17 +546,13 @@ uint32_t DummyRobot::CommandHandler::ParseCommand(const std::string &_cmd)
             break;
 
         case COMMAND_TARGET_POINT_INTERRUPTABLE:
-            if (_cmd[0] == '>' || _cmd[0] == '&')
+            if (_cmd[0] == '>')
             {
                 float joints[6];
                 float speed;
 
-                if (_cmd[0] == '>')
-                    argNum = sscanf(_cmd.c_str(), ">%f,%f,%f,%f,%f,%f,%f", joints, joints + 1, joints + 2,
-                                    joints + 3, joints + 4, joints + 5, &speed);
-                if (_cmd[0] == '&')
-                    argNum = sscanf(_cmd.c_str(), "&%f,%f,%f,%f,%f,%f,%f", joints, joints + 1, joints + 2,
-                                    joints + 3, joints + 4, joints + 5, &speed);
+                argNum = sscanf(_cmd.c_str(), ">%f,%f,%f,%f,%f,%f,%f", joints, joints + 1, joints + 2,
+                                joints + 3, joints + 4, joints + 5, &speed);
                 if (argNum == 6)
                 {
                     context->MoveJ(joints[0], joints[1], joints[2],

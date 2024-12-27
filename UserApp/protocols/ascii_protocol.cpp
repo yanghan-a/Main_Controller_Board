@@ -6,7 +6,7 @@ extern DummyRobot dummy;
 void OnUsbAsciiCmd(const char* _cmd, size_t _len, StreamSink &_responseChannel)
 {
     /*---------------------------- ↓ Add Your CMDs Here ↓ -----------------------------*/
-    if (_cmd[0] == '!' || !dummy.IsEnabled())
+    if (_cmd[0] == '!')// || !dummy.IsEnabled())
     {
         std::string s(_cmd);
         if (s.find("STOP") != std::string::npos)
@@ -50,6 +50,12 @@ void OnUsbAsciiCmd(const char* _cmd, size_t _len, StreamSink &_responseChannel)
     {
         uint32_t freeSize = dummy.commandHandler.Push(_cmd);
         Respond(_responseChannel, "%d", freeSize);
+    }else if(_cmd[0] == 'c')
+    {
+        float joints[6];
+        sscanf(_cmd, "c %f,%f,%f,%f,%f,%f", &joints[0], &joints[1], &joints[2], &joints[3], &joints[4], &joints[5]);
+        dummy.ikCalculate(joints[0], joints[1], joints[2], joints[3], joints[4], joints[5]);
+        Respond(_responseChannel, "ok");
     }
 
 /*---------------------------- ↑ Add Your CMDs Here ↑ -----------------------------*/
