@@ -1,5 +1,19 @@
 #include "6dof_kinematic.h"
 #include "communication.hpp"
+#include "usart.h"
+
+// inline float atan2f(float y, float x)
+// {
+//     return arm_atan2_f32(y, x);
+// }
+// inline float sqrtf(float x)
+// {
+//     return arm_sqrt_f32(x);
+// }
+// inline float acosf(float x)
+// {
+//     return arm_acos_f32(x);
+// }
 inline float cosf(float x)
 {
     return arm_cos_f32(x);
@@ -385,7 +399,7 @@ bool DOF6Kinematic::SolveIK(const DOF6Kinematic::Pose6D_t &_inputPose6D, const J
             MatMultiply(R31, R10, R30, 3, 3, 3);
             MatMultiply(R30, R06, R36, 3, 3, 3);//计算R36矩阵，然后ZYZ角解出theta4、5、6
 
-            // printf("R36:,%f,%f,%f,%f,%f,%f,%f,%f,%f\r\n", R36[0],R36[1],R36[2],R36[3],R36[4],R36[5],R36[6],R36[7],R36[8]);
+            // printf("R36:,%.3f,%.3f,%.3f,%.3f,%.3f,%.3f,%.3f,%.3f,%.3f\r\n", R36[0],R36[1],R36[2],R36[3],R36[4],R36[5],R36[6],R36[7],R36[8]);
             if (R36[8] >= 1.0 - 0.000001)
             {
                 cosqw = 1.0f;
@@ -418,19 +432,31 @@ bool DOF6Kinematic::SolveIK(const DOF6Kinematic::Pose6D_t &_inputPose6D, const J
             }
             if (1.0f == cosqw || -1.0f == cosqw)
             {
-                if (0 == ind_arm)
-                {
-                    qw[0][0] = 0.0f;
-                    qw[0][2] = atan2f(R36[3], R36[0]);
-                    qw[1][2] = qw[0][2];
-                    qw[1][0] = qw[0][0];
-                } else
-                {
-                    qw[0][0] = 0.0f;
-                    qw[0][2] = atan2f(R36[3], R36[0]);
-                    qw[1][2] = qw[0][2];
-                    qw[1][0] = qw[0][0];
-                }
+                // if (0 == ind_arm)
+                // {
+                    if(cosqw == 1.0f)
+                    {
+                        qw[0][0] = _lastJoint6D.a[3];
+                        qw[0][2] = atan2f(R36[3], R36[0])-_lastJoint6D.a[3];
+
+                        qw[1][2] = _lastJoint6D.a[5];
+                        qw[1][0] = atan2f(R36[3], R36[0])-_lastJoint6D.a[5];
+                    }
+                    else if(cosqw == -1.0f)
+                    {
+                        qw[0][0] = _lastJoint6D.a[3];
+                        qw[0][2] = -atan2f(-R36[3], -R36[0])+_lastJoint6D.a[3];
+
+                        qw[1][2] = _lastJoint6D.a[5];
+                        qw[1][0] = atan2f(-R36[3], -R36[0])+_lastJoint6D.a[5];
+                    }
+                // } else
+                // {
+                //     qw[0][0] = 0.0f;
+                //     qw[0][2] = atan2f(R36[3], R36[0]);
+                //     qw[1][2] = qw[0][2];
+                //     qw[1][0] = qw[0][0];
+                // }
                 _outputSolves.solFlag[4 * ind_arm + 2 * ind_elbow + 0][2] = -1;
                 _outputSolves.solFlag[4 * ind_arm + 2 * ind_elbow + 1][2] = -1;
             } else
@@ -494,6 +520,237 @@ bool DOF6Kinematic::SolveIK(const DOF6Kinematic::Pose6D_t &_inputPose6D, const J
     for (i = 0; i < 8; i++)
         for (float &j: _outputSolves.config[i].a)
             j *= RAD_TO_DEG;
+
+    return true;
+}
+
+char matrix[200];
+bool DOF6Kinematic::SolveIK_Reduced(const DOF6Kinematic::Pose6D_t &_inputPose6D, const Joint6D_t &_lastJoint6D,
+                            DOF6Kinematic::IKSolves_t_Reduced &_outputSolves)
+{
+    float qs[1];//theta1
+    float qa[1][2];//theta2、theta3
+    float qw[2][3];//theta4、theta5、theta6
+    float cosqs, sinqs;
+    float cosqa[2], sinqa[2];
+    float cosqw, sinqw;
+    float P06[6];//六维姿态
+    float R06[9];//旋转矩阵
+    float P0_w[3];
+    float P1_w[3];
+    float L0_wt[3];
+    float L1_sw[3];
+    float R10[9];
+    float R31[9];
+    float R30[9];
+    float R36[9];
+    float l_sw_2, l_sw, atan_a, acos_a, acos_e;
+
+    // int ind_arm, ind_elbow, ind_wrist;
+    int i;
+
+    // if (0 == l_ew)
+    // {
+    //     l_ew = sqrtf(l_ew_2);
+    //     atan_e = atanf(armConfig.D_ELBOW / armConfig.L_FOREARM);
+    // }
+
+    P06[0] = _inputPose6D.X / 1000.0f;//转换为m
+    P06[1] = _inputPose6D.Y / 1000.0f;
+    P06[2] = _inputPose6D.Z / 1000.0f;
+    if (!_inputPose6D.hasR)//转换为弧度制
+    {
+        P06[3] = _inputPose6D.A / RAD_TO_DEG;
+        P06[4] = _inputPose6D.B / RAD_TO_DEG;
+        P06[5] = _inputPose6D.C / RAD_TO_DEG;
+        EulerAngleToRotMat(&(P06[3]), R06);//计算XYZ固定角对应的旋转矩阵
+    } else
+    {
+        memcpy(R06, _inputPose6D.R, 9 * sizeof(float));
+    }
+
+    qs[0] = _lastJoint6D.a[0];
+    qa[0][0] = _lastJoint6D.a[1];
+    qa[0][1] = _lastJoint6D.a[2];
+    for (i = 0; i < 2; i++)
+    {
+        qw[i][0] = _lastJoint6D.a[3];
+        qw[i][1] = _lastJoint6D.a[4];
+        qw[i][2] = _lastJoint6D.a[5];
+    }
+    MatMultiply(R06, L6_wrist, L0_wt, 3, 3, 1);//计算最后一个L_WRIST在0坐标系中的向量
+    for (i = 0; i < 3; i++)//计算关节4、5的坐标点
+    {
+        P0_w[i] = P06[i] - L0_wt[i];//用末端在0坐标系中的坐标减去link L_WRIST在0坐标系中的坐标，得到共轴点的位置
+    }
+    if (sqrt(P0_w[0] * P0_w[0] + P0_w[1] * P0_w[1]) <= 0.000001)//判断x、y坐标是否为0
+    {//这个情况可以直接忽略，机械臂不可能到达这个位置
+        qs[0] = _lastJoint6D.a[0];//此时theta1可以为任意值，为了减少运动，那么就认定位置不变
+
+        _outputSolves.solFlag[0][0] = -1;//-1代表theta1可以为任意值，为了减少运动，那么就认定位置不变
+        _outputSolves.solFlag[1][0] = -1;
+
+    } else
+    {
+        qs[0] = atan2f(P0_w[1], P0_w[0]);//这里直接计算出theta1的角度
+        _outputSolves.solFlag[0][0] = 1;//1代表正常解
+        _outputSolves.solFlag[1][0] = 1;
+    }
+    //下面一部分是求解theta2、theta3，主要运用的就是几何法，对两个三角形考虑余弦定理
+    cosqs = cosf(qs[0] );
+    sinqs = sinf(qs[0]);
+
+    R10[0] = cosqs;//构造R01矩阵的逆，也就是R10矩阵的转置
+    R10[1] = sinqs;
+    R10[2] = 0.0f;
+    R10[3] = 0.0f;
+    R10[4] = 0.0f;
+    R10[5] = -1.0f;
+    R10[6] = -sinqs;
+    R10[7] = cosqs;
+    R10[8] = 0.0f;
+
+    MatMultiply(R10, P0_w, P1_w, 3, 3, 1);
+    for (i = 0; i < 3; i++)//在坐标系1中计算
+    {
+        L1_sw[i] = P1_w[i] - L1_base[i];//这里要改为+，因为定义的时候添加了负号
+    }
+    l_sw_2 = L1_sw[0] * L1_sw[0] + L1_sw[1] * L1_sw[1];
+    l_sw = sqrtf(l_sw_2);
+
+    if (fabs(l_se + l_ew - l_sw) <= 0.000001)//这里是判断是否是边界
+    {
+        qa[0][0] = atan2f(L1_sw[1], L1_sw[0]);//theta2
+        qa[0][1] = -(((float) M_PI_2) - atan_e);
+        if (l_sw > l_se + l_ew)
+        {//超出范围
+            _outputSolves.solFlag[0][1] = 0;//0代表到不了，但几乎重合
+            _outputSolves.solFlag[1][1] = 0;
+        } else
+        {
+            _outputSolves.solFlag[0][1] = 1;//1代表正常解
+            _outputSolves.solFlag[1][1] = 1;
+        }
+    } else if (fabs(l_sw - fabs(l_se - l_ew)) <= 0.000001)//另一个边界，这个情况机械臂也达不到位置
+    {
+        qa[0][0] = atan2f(L1_sw[1], L1_sw[0]);
+        qa[0][1] = (float) M_PI_2+ atan_e;
+        if (l_sw < fabs(l_se - l_ew))
+        {
+            _outputSolves.solFlag[0][1] = 0;
+            _outputSolves.solFlag[1][1] = 0;
+        } else
+        {
+            _outputSolves.solFlag[0][1] = 1;
+            _outputSolves.solFlag[1][1] = 1;
+        }
+    } else
+    {
+        atan_a = atan2f(L1_sw[1], L1_sw[0]);
+        acos_a = 0.5f * (l_se_2 + l_sw_2 - l_ew_2) / (l_se * l_sw);
+        if (acos_a >= 1.0f) acos_a = 0.0f;//即使超出范围，它也会保证关节二四的连线与4的目标点共线
+        else if (acos_a <= -1.0f) acos_a = 0.0f;//二次方程角度考虑，这个情况不可能
+        else acos_a = acosf(acos_a);
+        acos_e = 0.5f * (l_se_2 + l_ew_2 - l_sw_2) / (l_se * l_ew);
+        if (acos_e >= 1.0f) acos_e = 0.0f;
+        else if (acos_e <= -1.0f) acos_e = (float) M_PI;
+        else acos_e = acosf(acos_e);
+
+        qa[0][0] = atan_a - acos_a ;
+        qa[0][1] = atan_e - acos_e + (float) M_PI_2;
+
+        _outputSolves.solFlag[0][1] = 1;
+        _outputSolves.solFlag[1][1] = 1;
+    }
+
+    //下面开始算后三个关节，与姿态相关
+    cosqa[0] = cosf(qa[0][0] );
+    sinqa[0] = sinf(qa[0][0] );
+    cosqa[1] = cosf(qa[0][1] );
+    sinqa[1] = sinf(qa[0][1] );
+
+    R31[0] = cosqa[0] * cosqa[1] - sinqa[0] * sinqa[1];//这里根据已经求出来的theta2和theta3，计算R31矩阵，也就是R13的逆
+    R31[1] = cosqa[0] * sinqa[1] + sinqa[0] * cosqa[1];
+    R31[2] = 0.0f;
+    R31[3] = 0.0f;
+    R31[4] = 0.0f;
+    R31[5] = -1.0f;
+    R31[6] = -cosqa[0] * sinqa[1] - sinqa[0] * cosqa[1];
+    R31[7] = cosqa[0] * cosqa[1] - sinqa[0] * sinqa[1];
+    R31[8] = 0.0f;
+
+    MatMultiply(R31, R10, R30, 3, 3, 3);
+    MatMultiply(R30, R06, R36, 3, 3, 3);//计算R36矩阵，然后ZYZ角解出theta4、5、6
+
+    // printf("R36:%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f\r\n", R36[0],R36[1],R36[2],R36[3],R36[4],R36[5],R36[6],R36[7],R36[8]);
+    if (R36[8] >= 1.0 - 0.001)
+    {
+        cosqw = 1.0f;
+        qw[0][1] = 0.0f;
+        qw[1][1] = 0.0f;
+    } else if (R36[8] <= -1.0 + 0.001)
+    {
+        cosqw = -1.0f;
+        qw[0][1] = (float) M_PI;
+        qw[1][1] = -(float) M_PI;
+    } else
+    {
+        cosqw = R36[8];
+        qw[0][1] = acosf(cosqw);
+        qw[1][1] = -acosf(cosqw);
+    }
+    if (1.0f == cosqw || -1.0f == cosqw)
+    {
+
+        if(cosqw == 1.0f)
+        {
+            qw[0][0] = _lastJoint6D.a[3];
+            qw[0][2] = atan2f(R36[3], R36[0])-_lastJoint6D.a[3];
+
+            qw[1][2] = _lastJoint6D.a[5];
+            qw[1][0] = atan2f(R36[3], R36[0])-_lastJoint6D.a[5];
+        }
+        else if(cosqw == -1.0f)
+        {
+            qw[0][0] = _lastJoint6D.a[3];
+            qw[0][2] = -atan2f(-R36[3], -R36[0])+_lastJoint6D.a[3];
+
+            qw[1][2] = _lastJoint6D.a[5];
+            qw[1][0] = atan2f(-R36[3], -R36[0])+_lastJoint6D.a[5];
+        }
+
+        _outputSolves.solFlag[0][2] = -1;
+        _outputSolves.solFlag[1][2] = -1;
+    } else
+    {
+        qw[0][0] = atan2f(R36[5], R36[2]);
+        qw[1][0] = atan2f(-R36[5], -R36[2]);
+        qw[0][2] = atan2f(R36[7], -R36[6]);
+        qw[1][2] = atan2f(-R36[7], R36[6]);
+
+        _outputSolves.solFlag[0][2] = 1;
+        _outputSolves.solFlag[1][2] = 1;
+    }
+
+    for (i = 0; i < 2; i++)
+    {
+        _outputSolves.config[i].a[0] = qs[0];
+        _outputSolves.config[i].a[1] = qa[0][0];
+        _outputSolves.config[i].a[2] = qa[0][1];
+        _outputSolves.config[i].a[3] = qw[i][0];
+        _outputSolves.config[i].a[4] = qw[i][1];
+        _outputSolves.config[i].a[5] = qw[i][2];
+    }
+
+
+    for (i = 0; i < 2; i++)
+        for (float &j: _outputSolves.config[i].a)
+            j *= RAD_TO_DEG;
+    // printf("R36:%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f\r\n", R36[0],R36[1],R36[2],R36[3],R36[4],R36[5],R36[6],R36[7],R36[8]);
+    // sprintf(matrix, "R36:%.5f,%.5f,%.5f,%.5f,%.5f,%.5f,%.5f,%.5f,%.5f\r\n", R36[0],R36[1],R36[2],R36[3],R36[4],R36[5],R36[6],R36[7],R36[8]);
+    // printf("solution%d:%.1f,%.1f,%.1f,%.1f,%.1f,%.1f \r\n", i,ikSolves.config[i].a[0],ikSolves.config[i].a[1],ikSolves.config[i].a[2],
+    //     ikSolves.config[i].a[3],ikSolves.config[i].a[4],ikSolves.config[i].a[5]);
+    // HAL_UART_Transmit(&huart1, (uint8_t *)matrix, strlen(matrix), HAL_MAX_DELAY);
 
     return true;
 }

@@ -19,7 +19,8 @@ extern "C" {
 #include "time_utils.h"
 
 void Main(void);
-
+void OnTimer10Callback();
+void OnTimer7Callback();
 extern uint64_t serialNumber;
 extern char serialNumberStr[13];
 //extern uint64_t myserial;

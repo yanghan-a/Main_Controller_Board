@@ -52,6 +52,7 @@
 osSemaphoreId sem_usb_irq;
 osSemaphoreId sem_uart4_dma;
 osSemaphoreId sem_uart5_dma;
+osSemaphoreId sem_uart1_dma;
 osSemaphoreId sem_usb_rx;
 osSemaphoreId sem_usb_tx;
 osSemaphoreId sem_can1_tx;
@@ -101,6 +102,8 @@ void MX_FREERTOS_Init(void) {
     sem_uart4_dma = osSemaphoreNew(1, 1, osSemaphore(sem_uart4_dma));
     osSemaphoreDef(sem_uart5_dma);
     sem_uart5_dma = osSemaphoreNew(1, 1, osSemaphore(sem_uart5_dma));
+    osSemaphoreDef(sem_uart1_dma);
+    sem_uart4_dma = osSemaphoreNew(1, 1, osSemaphore(sem_uart1_dma));
 
     // Create a semaphore for USB RX, and start with no tokens by removing the starting one.
     osSemaphoreDef(sem_usb_rx);
@@ -164,6 +167,10 @@ void StartDefaultTask(void *argument)
     Main();
 
     vTaskDelete(defaultTaskHandle);
+  // for(;;)
+  // {
+  //   // osDelay(1000);
+  // }
   /* USER CODE END StartDefaultTask */
 }
 

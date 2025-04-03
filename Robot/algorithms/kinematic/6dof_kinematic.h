@@ -5,10 +5,11 @@
 #include "arm_math.h"
 #include "memory.h"
 
+
 class DOF6Kinematic
 {
 private:
-    const float RAD_TO_DEG = 57.295777754771045f;
+    const float RAD_TO_DEG = 57.29577951308232f;
 
     // DH parameters
     struct ArmConfig_t
@@ -74,11 +75,20 @@ public:
         char solFlag[8][3];
     };
 
+    struct IKSolves_t_Reduced
+    {
+        Joint6D_t config[2];
+        char solFlag[2][3];
+    };
+
     DOF6Kinematic(float L_BS, float D_BS, float L_AM, float L_FA, float D_EW, float L_WT);
 
     bool SolveFK(const Joint6D_t &_inputJoint6D, Pose6D_t &_outputPose6D);
 
     bool SolveIK(const Pose6D_t &_inputPose6D, const Joint6D_t &_lastJoint6D, IKSolves_t &_outputSolves);
+
+    bool SolveIK_Reduced(const Pose6D_t &_inputPose6D, const Joint6D_t &_lastJoint6D, IKSolves_t_Reduced &_outputSolves);
+
 };
 
 #endif //DOF6_KINEMATIC_SOLVER_H

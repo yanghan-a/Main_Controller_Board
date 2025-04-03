@@ -1,4 +1,5 @@
 #include "timer.hpp"
+#include "common_inc.h"
 
 static TimerCallback_t timerCallbacks[5];
 
@@ -107,4 +108,13 @@ void OnTimerCallback(TIM_TypeDef *timInstance)
     {
         timerCallbacks[4]();
     }
+}
+
+void OnTimer10Callback()
+{
+    BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+
+    // Wake & invoke thread IMMEDIATELY.
+    vTaskNotifyGiveFromISR(TaskHandle_t(uart1TxTaskHandle), &xHigherPriorityTaskWoken);
+    portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
 }

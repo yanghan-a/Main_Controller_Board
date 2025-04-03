@@ -42,8 +42,10 @@ void ASCII_protocol_process_line(const uint8_t* buffer, size_t len, StreamSink &
         OnUsbAsciiCmd(cmd, len, response_channel);
     else if (response_channel.channelType == StreamSink::CHANNEL_TYPE_UART4)
         OnUart4AsciiCmd(cmd, len, response_channel);
-    else if (response_channel.channelType == StreamSink::CHANNEL_TYPE_UART5)
-        OnUart5AsciiCmd(cmd, len, response_channel);
+    // else if (response_channel.channelType == StreamSink::CHANNEL_TYPE_UART5)
+    //     OnUart5AsciiCmd(cmd, len, response_channel);
+    else if (response_channel.channelType == StreamSink::CHANNEL_TYPE_UART1)
+        OnUart1AsciiCmd(cmd, len, response_channel);
 }
 
 void ASCII_protocol_parse_stream(const uint8_t* buffer, size_t len, StreamSink &response_channel)//这里处理多行流数据

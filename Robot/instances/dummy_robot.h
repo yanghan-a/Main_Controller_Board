@@ -2,8 +2,9 @@
 #define REF_STM32F4_FW_DUMMY_ROBOT_H
 
 #include "algorithms/kinematic/6dof_kinematic.h"
+#include "algorithms/dynamic/dynamic.h"
 #include "actuators/ctrl_step/ctrl_step.hpp"
-
+#include "algorithms/planner/planner.h"
 #define ALL 0
 
 /*
@@ -16,7 +17,6 @@
   | **Joint5** | 2               | 30             | 1000     | 80       | 200      | 250      |
   | **Joint6** | 2               | 30             | 1000     | 80       | 200      | 250      |
  */
-
 
 class DummyHand
 {
@@ -105,17 +105,23 @@ public:
 
     // This is the pose when power on.
     const DOF6Kinematic::Joint6D_t REST_POSE = {0, -165.3, 90, 0, 0, 0};//{0, -73, 180, 0, 0, 0};
-    const float DEFAULT_JOINT_SPEED = 60;  // r/s 30 实际上这个值还得除以10，也就是6圈/s
-    const DOF6Kinematic::Joint6D_t DEFAULT_JOINT_ACCELERATION_BASES = {150, 100, 200, 200, 200, 200};
-    const float DEFAULT_JOINT_ACCELERATION_LOW = 5;    // 0~100 30
+    const DOF6Kinematic::Joint6D_t start = {0, -100, 0, 0, 0, 0};//{0, -73, 180, 0, 0, 0};
+    const float DEFAULT_JOINT_SPEED = 50; //80也可以 // r/s 30 实际上这个值还得除以10，也就是4圈/s
+    const DOF6Kinematic::Joint6D_t DEFAULT_JOINT_ACCELERATION_BASES = {150, 80, 100, 200, 200, 200};
+    const float DEFAULT_JOINT_ACCELERATION_LOW = 3;    // 0~100 30
     const float DEFAULT_JOINT_ACCELERATION_HIGH = 100;  // 0~100 100
     const CommandMode DEFAULT_COMMAND_MODE = COMMAND_TARGET_POINT_INTERRUPTABLE;
 
 
+    DOF6Kinematic::Joint6D_t current = {};
+    DOF6Kinematic::Joint6D_t velocity = {};
+    DOF6Kinematic::Joint6D_t acceleration = {};
+
     DOF6Kinematic::Joint6D_t currentJoints = REST_POSE;
-    DOF6Kinematic::Joint6D_t targetJoints = REST_POSE;
+    DOF6Kinematic::Joint6D_t targetJoints = start;
     DOF6Kinematic::Joint6D_t initPose = REST_POSE;
     DOF6Kinematic::Pose6D_t currentPose6D = {};
+    DOF6Kinematic::Pose6D_t targetPose6D = {};
     volatile uint8_t jointsStateFlag = 0b00000000;
     CommandMode commandMode = DEFAULT_COMMAND_MODE;
     CtrlStepMotor* motorJ[7] = {nullptr};
@@ -124,18 +130,45 @@ public:
     //添加一个IK运算结果存储，用来在oled显示
     DOF6Kinematic::Joint6D_t ikResultJoint = {};
 
+    bool withplanner = false;
+    planner planner_traj;
+    enum planner_mode
+    {
+        NO_PLANNER = 0,
+        COMMAND_LINE = 1,
+    };
+    const planner_mode DEFAULT_PLANNER_MODE = NO_PLANNER;
+    planner_mode plannerMode = NO_PLANNER;
+    planner_mode requestPlannerMode = COMMAND_LINE;
+
+    planner::Pose6D goal_pose = {};
+    int32_t goal_index = 0;
+    bool newplanner = false;
+    void ControlLoop();
+    void SetPlannerMode(planner_mode _mode);
+
+
+    void SetGoal(int32_t numberofpoints, float x, float y, float z, float a, float b, float c);
+    void StartPlanner(bool _withplanner);
+
+
 
 
 
     void Init();
     bool MoveJ(float _j1, float _j2, float _j3, float _j4, float _j5, float _j6);
+    bool fkCalculate();
     bool ikCalculate(float _x, float _y, float _z, float _a, float _b, float _c);
+    bool ikCalculate_reduced(float _x, float _y, float _z, float _a, float _b, float _c);
     bool MoveL(float _x, float _y, float _z, float _a, float _b, float _c);
-    void MoveJoints(DOF6Kinematic::Joint6D_t _joints);
+    void MoveJoints(DOF6Kinematic::Joint6D_t _joints, int i);
+    bool MoveJ_Traj(float _j1, float _j2, float _j3, float _j4, float _j5, float _j6,float _v1, float _v2, float _v3, float _v4, float _v5, float _v6,
+    float _a1, float _a2, float _a3, float _a4, float _a5, float _a6);
     void SetJointSpeed(float _speed);
     void SetJointAcceleration(float _acc);
-    void UpdateJointAngles();
-    void UpdateJointAnglesCallback();
+    void UpdateJointAngles(int i);
+    void UpdateAccCurrent(int i);
+    void UpdateJointAnglesCallback(int i);
     void UpdateJointPose6D();
     void Reboot();
     void SetEnable(bool _enable);
@@ -149,6 +182,9 @@ public:
     bool IsMoving();
     bool IsEnabled();
     void SetCommandMode(uint32_t _mode);
+
+    void DynamicCalculation(float _j1, float _j2, float _j3, float _j4, float _j5, float _j6,float _v1, float _v2, float _v3, float _v4, float _v5, float _v6,
+    float _a1, float _a2, float _a3, float _a4, float _a5, float _a6);
 
 
     // Communication protocol definitions
@@ -176,8 +212,14 @@ public:
             make_protocol_object("tuning", tuningHelper.MakeProtocolDefinitions()),
 
             //添加一个IK运算结果给用户
-            make_protocol_function("ik_calculate", *this, &DummyRobot::ikCalculate, "x", "y", "z", "a", "b", "c")
-        );
+            make_protocol_function("fk_calculate", *this, &DummyRobot::fkCalculate),
+
+            make_protocol_function("ik_calculate", *this, &DummyRobot::ikCalculate, "x", "y", "z", "a", "b", "c"),
+            make_protocol_function("ik_calculate_reduced", *this, &DummyRobot::ikCalculate_reduced, "x", "y", "z", "a", "b", "c"),
+
+            make_protocol_function("withplanner", *this, &DummyRobot::StartPlanner, "withplanner"),
+            make_protocol_function("set_goal", *this, &DummyRobot::SetGoal, "index", "x", "y", "z", "a", "b", "c")
+            );
     }
 
 
@@ -210,7 +252,11 @@ private:
     float jointSpeed = DEFAULT_JOINT_SPEED;
     float jointSpeedRatio = 1;
     DOF6Kinematic::Joint6D_t dynamicJointSpeeds = {1, 1, 1, 1, 1, 1};
+    DOF6Kinematic::Joint6D_t dynamicJointSpeeds_Traj = {0, 0, 0, 0, 0, 0};
+    DOF6Kinematic::Joint6D_t dynamicJointAcceleration_Traj= {0, 0, 0, 0, 0, 0};
     DOF6Kinematic* dof6Solver;
+
+    DOF6Dynamic* dof6Dynamic;
     bool isEnabled = false;
     bool isRGBEnabled = false;
     uint32_t rgbMode = 0;

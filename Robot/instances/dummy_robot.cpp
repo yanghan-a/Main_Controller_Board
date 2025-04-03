@@ -1,8 +1,9 @@
 #include "communication.hpp"
 #include "dummy_robot.h"
-
+#include "usart.h"
 #include "time_utils.h"
 
+extern DummyRobot dummy;
 inline float AbsMaxOf6(DOF6Kinematic::Joint6D_t _joints, uint8_t &_index)
 {//判断6个关节的绝对值最大值，并返回最大值和对应的关节序号
     float max = -1;
@@ -24,14 +25,15 @@ DummyRobot::DummyRobot(CAN_HandleTypeDef* _hcan) :
 {
     motorJ[ALL] = new CtrlStepMotor(_hcan, 0, false, 1, -180, 180);
     motorJ[1] = new CtrlStepMotor(_hcan, 1, true, 50, -170, 170);
-    motorJ[2] = new CtrlStepMotor(_hcan, 2, false, 50, -166, 1);
-    motorJ[3] = new CtrlStepMotor(_hcan, 3, false, 50, -56, 91);
+    motorJ[2] = new CtrlStepMotor(_hcan, 2, false, 50, -166, -20);
+    motorJ[3] = new CtrlStepMotor(_hcan, 3, false, 50, -75, 90.1);
     motorJ[4] = new CtrlStepMotor(_hcan, 4, true, 50, -180, 180);
-    motorJ[5] = new CtrlStepMotor(_hcan, 5, false, 50, -120, 120);
-    motorJ[6] = new CtrlStepMotor(_hcan, 6, false, 50, -720, 720);
+    motorJ[5] = new CtrlStepMotor(_hcan, 5, false, 30, -120, 120);
+    motorJ[6] = new CtrlStepMotor(_hcan, 6, true, 50, -720, 720);
     // hand = new DummyHand(_hcan, 7);
-
     dof6Solver = new DOF6Kinematic(0.133f, 0.035f, 0.146f, 0.117f, 0.052f, 0.0855f);
+    dof6Dynamic = new DOF6Dynamic(0.133f, 0.035f, 0.146f, 0.117f, 0.052f, 0.0855f,9.8);
+    planner_traj.Init();
 }
 
 
@@ -60,15 +62,67 @@ void DummyRobot::Reboot()
 }
 
 
-void DummyRobot::MoveJoints(DOF6Kinematic::Joint6D_t _joints)
+void DummyRobot::MoveJoints(DOF6Kinematic::Joint6D_t _joints, int i)
 {//参数为目标位置，另一个参数为速度限制
-    for (int j = 1; j <= 6; j++)
+    if(dummy.commandMode == COMMAND_TARGET_POINT_INTERRUPTABLE)
     {
-        motorJ[j]->SetAngleWithVelocityLimit(_joints.a[j - 1] - initPose.a[j - 1],
-                                             dynamicJointSpeeds.a[j - 1]);
+        // for (int j = 1; j <= 6; j++)
+        // {
+            motorJ[i]->SetAngleWithVelocityLimit(_joints.a[i - 1] - initPose.a[i - 1],
+                                                 dynamicJointSpeeds.a[i - 1]);
+        // }
+    }else if(dummy.commandMode == COMMAND_TARGET_POINT_SEQUENTIAL)
+    {
+        // for (int j = 1; j <= 6; j++)
+        // {
+            motorJ[i]->SetAngle(_joints.a[i - 1] - initPose.a[i - 1]);
+        // }
+    }else if(dummy.commandMode == COMMAND_CONTINUES_TRAJECTORY)
+    {
+        // for (int j = 1; j <= 6; j++)
+        // {
+            motorJ[i]->SetAngleWithVelocityAndAcceleration(_joints.a[i - 1] - initPose.a[i - 1],
+                                                           dynamicJointSpeeds_Traj.a[i - 1],
+                                                           dynamicJointAcceleration_Traj.a[i - 1]);
+        // }
     }
+
 }
 
+bool DummyRobot::MoveJ_Traj(float _j1, float _j2, float _j3, float _j4, float _j5, float _j6,float _v1, float _v2, float _v3, float _v4, float _v5, float _v6,
+    float _a1, float _a2, float _a3, float _a4, float _a5, float _a6)
+{
+    DOF6Kinematic::Joint6D_t targetJointsTmp(_j1, _j2, _j3, _j4, _j5, _j6);
+    bool valid = true;
+
+    for (int j = 1; j <= 6; j++)
+    {//判断6个关节运动返回是否超过了限位
+        if (targetJointsTmp.a[j - 1] > motorJ[j]->angleLimitMax ||
+            targetJointsTmp.a[j - 1] < motorJ[j]->angleLimitMin)
+            valid = false;
+    }
+
+    if (valid)
+    {
+        // DOF6Kinematic::Joint6D_t deltaJoints = targetJointsTmp - currentJoints;//找到目标位置与当前位置的差值
+        // uint8_t index;
+        // float maxAngle = AbsMaxOf6(deltaJoints, index);//找到差值最大的
+        // float time = maxAngle * (float) (motorJ[index + 1]->reduction) / jointSpeed;
+        // for (int j = 1; j <= 6; j++)
+        // {
+        //     dynamicJointSpeeds.a[j - 1] =
+        //         abs(deltaJoints.a[j - 1] * (float) (motorJ[j]->reduction) / time * 0.1f); //0~10r/s
+        // }
+        dynamicJointSpeeds_Traj = {_v1, _v2, _v3, _v4, _v5, _v6};
+        dynamicJointAcceleration_Traj = {_a1, _a2, _a3, _a4, _a5, _a6};
+        jointsStateFlag = 0;
+        targetJoints = targetJointsTmp;
+
+        return true;
+    }
+
+    return false;
+}
 
 bool DummyRobot::MoveJ(float _j1, float _j2, float _j3, float _j4, float _j5, float _j6)
 {
@@ -103,11 +157,25 @@ bool DummyRobot::MoveJ(float _j1, float _j2, float _j3, float _j4, float _j5, fl
     return false;
 }
 
+char fk[200];
+bool DummyRobot::fkCalculate()
+{
+    sprintf(fk, "fk:%.5f,%.5f,%.5f,%.5f,%.5f,%.5f \r\n", currentPose6D.X,currentPose6D.Y,currentPose6D.Z,
+    currentPose6D.A,currentPose6D.B,currentPose6D.C);
+    HAL_UART_Transmit(&huart1, (uint8_t *)fk, strlen(fk), HAL_MAX_DELAY);
+    return true;
+}
+
+
 bool DummyRobot::ikCalculate(float _x, float _y, float _z, float _a, float _b, float _c)
 {
     DOF6Kinematic::Pose6D_t pose6D(_x, _y, _z, _a, _b, _c);
     DOF6Kinematic::IKSolves_t ikSolves{};
     DOF6Kinematic::Joint6D_t lastJoint6D{};
+    for (int i = 0; i < 6; i++)
+    {
+        lastJoint6D.a[i] = targetJoints.a[i]/RAD_TO_DEG;
+    }
     uint32_t t1 = micros();
     dof6Solver->SolveIK(pose6D, lastJoint6D, ikSolves);
     t1 = micros() - t1;
@@ -164,18 +232,92 @@ bool DummyRobot::ikCalculate(float _x, float _y, float _z, float _a, float _b, f
     return false;
 }
 
+char solutions[200];
+bool DummyRobot::ikCalculate_reduced(float _x, float _y, float _z, float _a, float _b, float _c)
+{
+    DOF6Kinematic::Pose6D_t pose6D(_x, _y, _z, _a, _b, _c);
+    DOF6Kinematic::IKSolves_t_Reduced ikSolves{};
+    DOF6Kinematic::Joint6D_t lastJoint6D{};
+    for (int i = 0; i < 6; i++)
+    {
+        lastJoint6D.a[i] = targetJoints.a[i]/RAD_TO_DEG;
+    }
+    // uint32_t t1 = micros();
+    dof6Solver->SolveIK_Reduced(pose6D, lastJoint6D, ikSolves);
+    // t1 = micros() - t1;
+    bool valid[4];
+    int validCnt = 0;
+
+    // printf("time:%lu\r\n",t1);
+    for (int i = 0; i < 2; i++)
+    {
+
+        valid[i] = true;
+        sprintf(solutions, "solution%d:%.5f,%.5f,%.5f,%.5f,%.5f,%.5f \r\n", i,ikSolves.config[i].a[0],ikSolves.config[i].a[1],ikSolves.config[i].a[2],
+            ikSolves.config[i].a[3],ikSolves.config[i].a[4],ikSolves.config[i].a[5]);
+        // printf("solution%d:%.1f,%.1f,%.1f,%.1f,%.1f,%.1f \r\n", i,ikSolves.config[i].a[0],ikSolves.config[i].a[1],ikSolves.config[i].a[2],
+        //     ikSolves.config[i].a[3],ikSolves.config[i].a[4],ikSolves.config[i].a[5]);
+        HAL_UART_Transmit(&huart1, (uint8_t *)solutions, strlen(solutions), HAL_MAX_DELAY);
+
+        for (int j = 1; j <= 6; j++)
+        {
+            if (ikSolves.config[i].a[j - 1] > motorJ[j]->angleLimitMax ||
+                ikSolves.config[i].a[j - 1] < motorJ[j]->angleLimitMin)
+            {
+                valid[i] = false;
+                break;
+            }
+        }
+        if (valid[i]) validCnt++;
+    }
+    if (validCnt)
+    {
+        float min = 1000;
+        uint8_t indexConfig = 0, indexJoint = 0;
+
+        for (int i = 0; i < 2; i++)
+        {
+            if (valid[i])
+            {
+                for (int j = 0; j < 6; j++)
+                    lastJoint6D.a[j] = ikSolves.config[i].a[j];
+                DOF6Kinematic::Joint6D_t tmp = currentJoints - lastJoint6D;
+                float maxAngle = AbsMaxOf6(tmp, indexJoint);
+                if (maxAngle < min)
+                {
+                    min = maxAngle;
+                    indexConfig = i;
+                }
+            }
+        }
+        ikResultJoint = {ikSolves.config[indexConfig].a[0], ikSolves.config[indexConfig].a[1],
+                     ikSolves.config[indexConfig].a[2], ikSolves.config[indexConfig].a[3],
+                     ikSolves.config[indexConfig].a[4], ikSolves.config[indexConfig].a[5]};
+
+        return true;
+    }
+
+    return false;
+}
+
 bool DummyRobot::MoveL(float _x, float _y, float _z, float _a, float _b, float _c)
 {
     DOF6Kinematic::Pose6D_t pose6D(_x, _y, _z, _a, _b, _c);
-    DOF6Kinematic::IKSolves_t ikSolves{};
+    // DOF6Kinematic::IKSolves_t ikSolves{};
+    DOF6Kinematic::IKSolves_t_Reduced ikSolves{};
+
     DOF6Kinematic::Joint6D_t lastJoint6D{};
 
-    dof6Solver->SolveIK(pose6D, lastJoint6D, ikSolves);
+    for (int i = 0; i < 6; i++)
+    {
+        lastJoint6D.a[i] = targetJoints.a[i]/RAD_TO_DEG;
+    }
+    dof6Solver->SolveIK_Reduced(pose6D, lastJoint6D, ikSolves);
 
-    bool valid[8];
+    bool valid[2];
     int validCnt = 0;
 
-    for (int i = 0; i < 8; i++)
+    for (int i = 0; i < 2; i++)
     {
         valid[i] = true;
 
@@ -196,7 +338,7 @@ bool DummyRobot::MoveL(float _x, float _y, float _z, float _a, float _b, float _
     {
         float min = 1000;
         uint8_t indexConfig = 0, indexJoint = 0;
-        for (int i = 0; i < 8; i++)
+        for (int i = 0; i < 2; i++)
         {
             if (valid[i])
             {
@@ -220,23 +362,31 @@ bool DummyRobot::MoveL(float _x, float _y, float _z, float _a, float _b, float _
     return false;
 }
 
-void DummyRobot::UpdateJointAngles()
+void DummyRobot::UpdateJointAngles(int i)
 {
-    motorJ[ALL]->UpdateAngle();
+    motorJ[i]->UpdateAngle();
 }
 
-
-void DummyRobot::UpdateJointAnglesCallback()
+void DummyRobot::UpdateAccCurrent(int i)
 {
-    for (int i = 1; i <= 6; i++)
-    {
-        currentJoints.a[i - 1] = motorJ[i]->angle + initPose.a[i - 1];
+    motorJ[i]->UpdateAccCurrent();
+}
 
-        if (motorJ[i]->state == CtrlStepMotor::FINISH)
-            jointsStateFlag |= (1 << i);
-        else
-            jointsStateFlag &= ~(1 << i);
-    }
+void DummyRobot::UpdateJointAnglesCallback(int i)
+{
+    // for (int i = 1; i <= 6; i++)
+    // {
+    currentJoints.a[i - 1] = motorJ[i]->angle + initPose.a[i - 1];
+
+    if (motorJ[i]->state == CtrlStepMotor::FINISH)
+        jointsStateFlag |= (1 << i);
+    else
+        jointsStateFlag &= ~(1 << i);
+
+    current.a[i-1] =  motorJ[i]->current;
+    velocity.a[i-1] = motorJ[i]->velocity;
+    acceleration.a[i-1] = motorJ[i]->acceleration;
+    // }
 }
 
 
@@ -295,10 +445,14 @@ void DummyRobot::CalibrateHomeOffset()
 void DummyRobot::Homing()
 {
     float lastSpeed = jointSpeed;
-    SetJointSpeed(20);
+    SetJointSpeed(40);
 
     MoveJ(0, -90, 0, 0, 0, 0);
-    MoveJoints(targetJoints);
+    for (int j = 1; j <= 6; j++)
+    {
+        MoveJoints(targetJoints,j);
+    }
+
     while (IsMoving())
         osDelay(10);
 
@@ -309,11 +463,14 @@ void DummyRobot::Homing()
 void DummyRobot::Resting()
 {
     float lastSpeed = jointSpeed;
-    SetJointSpeed(20);
+    SetJointSpeed(40);
 
     MoveJ(REST_POSE.a[0], REST_POSE.a[1], REST_POSE.a[2],
           REST_POSE.a[3], REST_POSE.a[4], REST_POSE.a[5]);
-    MoveJoints(targetJoints);
+        for (int j = 1; j <= 6; j++)
+    {
+        MoveJoints(targetJoints,j);
+    }
     while (IsMoving())
         osDelay(10);
 
@@ -392,6 +549,23 @@ void DummyRobot::SetCommandMode(uint32_t _mode)
             break;
     }
 }
+char data[500];
+char data1[5];
+void DummyRobot::DynamicCalculation(float _j1, float _j2, float _j3, float _j4, float _j5, float _j6,float _v1, float _v2, float _v3, float _v4, float _v5, float _v6,
+    float _a1, float _a2, float _a3, float _a4, float _a5, float _a6)
+{
+    volatile uint32_t t1 = micros();
+    float j[6] = {_j1, _j2, _j3, _j4, _j5, _j6};
+    float v[6] = {_v1, _v2, _v3, _v4, _v5, _v6};
+    float a[6] = {_a1, _a2, _a3, _a4, _a5, _a6};
+
+    float Yr[6*36];
+    dof6Dynamic->Yr_clc(j,v,a,Yr);
+    volatile uint32_t t2 = micros();
+    volatile uint32_t t3 = t2 - t1;
+    sprintf(data, "%.2f,%.2f,%.2f,%.2f,%.2f,%.2f\n %.2f,%.2f,%.2f,%.2f,%.2f,%.2f\n%d", Yr[0], Yr[1], Yr[2], Yr[3], Yr[4], Yr[5], Yr[6], Yr[7], Yr[8], Yr[9], Yr[10], Yr[11],t3);
+    HAL_UART_Transmit_DMA(&huart1, (uint8_t *)data, sizeof(data));
+}
 
 
 DummyHand::DummyHand(CAN_HandleTypeDef* _hcan, uint8_t
@@ -467,7 +641,10 @@ void DummyRobot::CommandHandler::EmergencyStop()
 {
     context->MoveJ(context->currentJoints.a[0], context->currentJoints.a[1], context->currentJoints.a[2],
                    context->currentJoints.a[3], context->currentJoints.a[4], context->currentJoints.a[5]);
-    context->MoveJoints(context->targetJoints);
+    for (int j = 1; j <= 6; j++)
+    {
+        context->MoveJoints(context->targetJoints,j);
+    }
     context->isEnabled = false;
     ClearFifo();
 }
@@ -513,7 +690,10 @@ uint32_t DummyRobot::CommandHandler::ParseCommand(const std::string &_cmd)
                                    joints[3], joints[4], joints[5]);
                 }
                 // Trigger a transmission immediately, in case IsMoving() returns false
-                context->MoveJoints(context->targetJoints);
+                for (int j = 1; j <= 6; j++)
+                {
+                    context->MoveJoints(context->targetJoints,j);
+                }
 
                 while (context->IsMoving() && context->IsEnabled())
                     osDelay(5);
@@ -535,7 +715,10 @@ uint32_t DummyRobot::CommandHandler::ParseCommand(const std::string &_cmd)
                     context->MoveL(pose[0], pose[1], pose[2], pose[3], pose[4], pose[5]);
                 }
                 // Trigger a transmission immediately, in case IsMoving() returns false
-                context->MoveJoints(context->targetJoints);
+                for (int j = 1; j <= 6; j++)
+                {
+                    context->MoveJoints(context->targetJoints,j);
+                }
 
                 while (context->IsMoving())
                     osDelay(5);
@@ -625,4 +808,63 @@ void DummyRobot::TuningHelper::SetFreqAndAmp(float _freq, float _amp)
 
     frequency = _freq;
     amplitude = _amp;
+}
+
+void DummyRobot::ControlLoop()
+{
+    planner::Vector3D position = {currentPose6D.X , currentPose6D.Y , currentPose6D.Z};
+    planner::Vector3D orientation ={currentPose6D.A, currentPose6D.B, currentPose6D.C};//{0,0,0}
+    planner::Pose6D currentPose6D_ = {position, orientation};
+
+    if (requestPlannerMode != plannerMode)
+    {
+        plannerMode = requestPlannerMode;
+        newplanner = true;
+    }
+    if (newplanner)
+    {
+        newplanner = false;
+        switch (plannerMode)
+        {
+            case NO_PLANNER:
+                break;
+            case COMMAND_LINE:
+                planner_traj.line.NewTask(currentPose6D_);
+                targetPose6D = currentPose6D;
+                break;
+        }
+    }
+
+    switch (plannerMode)
+    {
+        case NO_PLANNER:
+            break;
+        case COMMAND_LINE:
+            planner_traj.line.CalcSoftGoal(goal_index, goal_pose);
+            targetPose6D = {planner_traj.line.catesian_temp_goal_pose.position.x*1000.0f,
+                            planner_traj.line.catesian_temp_goal_pose.position.y*1000.0f,
+                            planner_traj.line.catesian_temp_goal_pose.position.z*1000.0f,
+                            planner_traj.line.catesian_temp_goal_pose.orientation.x*RAD_TO_DEG,
+                            planner_traj.line.catesian_temp_goal_pose.orientation.y*RAD_TO_DEG,
+                            planner_traj.line.catesian_temp_goal_pose.orientation.z*RAD_TO_DEG};
+            MoveL(targetPose6D.X, targetPose6D.Y, targetPose6D.Z, targetPose6D.A, targetPose6D.B, targetPose6D.C);
+
+            break;
+    }
+}
+
+void DummyRobot::SetPlannerMode(planner_mode _mode)
+{
+    requestPlannerMode = _mode;
+}
+
+void DummyRobot::SetGoal(int32_t numberofpoints, float x, float y, float z, float a, float b, float c)
+{
+    goal_index = numberofpoints;
+    goal_pose = {{x, y, z},{a, b, c}};
+}
+
+void DummyRobot::StartPlanner(bool _withplanner)
+{
+    withplanner = _withplanner;
 }
